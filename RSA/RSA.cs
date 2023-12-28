@@ -37,8 +37,8 @@ public class RSAEncryption
 
     public BigInteger[][] GenerateKeys()
     {
-        var p = new BigInteger(6013240789);//GeneratePrime();
-        var q = new BigInteger(4912596263);//GeneratePrime();
+        var p = GeneratePrime();
+        var q = GeneratePrime();
 
         var n = p * q;
         var phi = (p - 1) * (q - 1);
