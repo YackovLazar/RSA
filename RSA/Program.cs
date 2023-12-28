@@ -8,7 +8,7 @@ internal class Program
     private static void Main(string[] args)
     {
         var rsa = new RSAEncryption();
-        var data = BitConverter.GetBytes(3);
+        var data = new BigInteger(Encoding.UTF8.GetBytes("Hello"));
         var keys = rsa.GenerateKeys();
         var PublicKey = keys[0][0];
         var modulus = keys[0][1];
@@ -17,8 +17,8 @@ internal class Program
         var decryptedData = rsa.ApplyModulus(encryptedData, PrivateKey, modulus);
 
 
-        Console.WriteLine($"Original data: {Encoding.UTF8.GetString(data)}");
+        Console.WriteLine($"Original data: {data}");
 
-        Console.WriteLine($"Encrypted data: {decryptedData[0]}");
+        Console.WriteLine($"Decrypted data: {Encoding.UTF8.GetString(decryptedData.ToByteArray())}");
     }
 }

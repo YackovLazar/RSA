@@ -18,15 +18,10 @@ public class RSAEncryption
         _rng = RandomNumberGenerator.Create();
     }
 
-    public byte[] ApplyModulus(byte[] data, byte[] key, byte[] modulus)
+    public BigInteger ApplyModulus(BigInteger data, BigInteger key, BigInteger modulus)
     {
-        var IntKey = new BigInteger(key);
-        var IntMod = new BigInteger(modulus);
-
-        var IntData = new BigInteger(data);
-
-        var DecryptedData = BigInteger.ModPow(IntData, IntKey, IntMod);
-        return BigIntegerToByteArray(DecryptedData);
+        var ModdedData = BigInteger.ModPow(data, key, modulus);
+        return ModdedData;
     }
 
     public byte[] BigIntegerToByteArray(BigInteger bigInt)
@@ -40,10 +35,10 @@ public class RSAEncryption
         return byteArray;
     }
 
-    public byte[][][] GenerateKeys()
+    public BigInteger[][] GenerateKeys()
     {
-        var p = new BigInteger(5);//GeneratePrime();
-        var q = new BigInteger(7);//GeneratePrime();
+        var p = new BigInteger(6013240789);//GeneratePrime();
+        var q = new BigInteger(4912596263);//GeneratePrime();
 
         var n = p * q;
         var phi = (p - 1) * (q - 1);
@@ -51,7 +46,7 @@ public class RSAEncryption
         var e = GenerateE(phi, n);
         var d = GenerateD(e, phi);
 
-        return [[e.ToByteArray(), n.ToByteArray()], [d.ToByteArray(), n.ToByteArray()]];
+        return [[e, n], [d, n]];
     }
 
     private BigInteger GeneratePrime()
@@ -98,7 +93,7 @@ public class RSAEncryption
         var k = e / phi;
         var difference = k * e - phi;
 
-        // TODO: Implemment Extended Euclidean Algorithm
+        return ModInverse(e, phi);
     }
 
     private int[] GeneratePrimes(int max)
@@ -199,5 +194,30 @@ public class RSAEncryption
         while (result < lowerBound || result >= upperBound);
 
         return result;
+    }
+
+    public BigInteger XGCD(BigInteger a, BigInteger n) 
+{
+    BigInteger i = n, v = 0, d = 1;
+    while (a > 0) 
+    {
+        BigInteger t = i / a, x = a;
+        a = i % x;
+        i = x;
+        x = d;
+        d = v - t * x;
+        v = x;
+    }
+
+    v %= n;
+
+    if (v < 0) v = (v + n) % n;
+        return v;
+    }
+
+    public BigInteger ModInverse(BigInteger a, BigInteger m)
+    {
+        var ans = XGCD(a, m);
+        return ans;
     }
 }
